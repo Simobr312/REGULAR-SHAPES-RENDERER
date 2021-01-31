@@ -54,7 +54,7 @@ int main() {
         switch(c) {
             default:    Zoom = Null;                break;
             case 1:     Zoom = LinearZoom;          break;
-            case 2:     Zoom = ArmonicZoom;     break;
+            case 2:     Zoom = ArmonicZoom;         break;
         }
 
         float (*Move)(float&);
