@@ -9,6 +9,8 @@ const double pi = 355./113.;
 const int dimX = 50;
 const int dimY = dimX / 2;
 
+const char* glyph = " *";
+
 void Clear(bool grid[dimX][dimY]);
 void Render(bool grid[dimX][dimY]);
 
@@ -30,7 +32,7 @@ double LinearRotation(double alpha) { return alpha + (linear_rotation+=0.1); }
 
 int main() {
     while(true) {
-        bool grid[dimX][dimY] {};
+        bool grid[dimX][dimY];
         float r; int vert; int c; 
 
         linear_move = (linear_rotation = 0);
@@ -48,25 +50,25 @@ int main() {
         printf("Scegli lo zoom:\n0. None\n1. Linear\n2.Armonic\n");
         scanf("%d", &c);
         switch(c) {
-            default:    Zoom = Null;        break;
-            case 1:     Zoom = LinearZoom;  break;
-            case 2:     Zoom = ArmonicZoom; break;
+            default:    Zoom = Null;                break;
+            case 1:     Zoom = LinearZoom;          break;
+            case 2:     Zoom = ArmonicZoom;     break;
         }
 
         float (*Move)(float);
         printf("Scegli il movimento:\n0. None\n1. Armonic\n");
         scanf("%d", &c);
         switch(c) {
-            default:    Move = Null;        break;
-            case 1:     Move = ArmonicMove; break;
+            default:    Move = Null;                break;
+            case 1:     Move = ArmonicMove;         break;
         }
 
         double (*Rotation)(double);
         printf("Scegli la rotazione:\n0. None\n1. Linear\n");
         scanf("%d", &c);
         switch(c) {
-            default:    Rotation = Null;        break;
-            case 1:     Rotation = LinearRotation;break;
+            default:    Rotation = Null;            break;
+            case 1:     Rotation = LinearRotation;  break;
         }
 
         bool a = true;
@@ -94,7 +96,7 @@ void Clear(bool grid[dimX][dimY]) {
 void Render(bool output[dimX][dimY]) {
     for(int y = 0 ; y < dimY ; ++y) {
         for(int x = 0 ; x < dimX ; ++x) {
-            putchar(output[x][y] ? '*' : ' ');
+            putchar(glyph[output[x][y]]);
         }
         putchar('\n');
     }
