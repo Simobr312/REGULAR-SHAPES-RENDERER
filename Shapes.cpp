@@ -29,6 +29,10 @@ float ArmonicMove(float& pos) { pos += sin(clock() * 0.002);   }
 double LinearRotation(double& alpha) { alpha += 0.1; }
 
 int main() {
+    printf("Deloped by Simone Riccio\n");
+    printf("This little program will draw you in the console every regular poligon possible to that resolution\n");
+    printf("The great thing is that everything you see is only made by printing letter.\n \n");
+
     while(true) {
         bool grid[dimX][dimY];
         float r = 0; 
@@ -36,15 +40,15 @@ int main() {
 
         void (*Shape)(bool [][dimY], int, float, float, double);
 
-        printf("Scegli il raggio: \n");
+        printf("Choose the radius: \n");
         scanf("%f", &r);
 
-        printf("Scegli il numero di vertici della figura: ");
+        printf("Choose the number of vertices of the poligon: ");
         scanf("%d", &vert);
         Shape = ( vert< 2  || vert > 10) ? Circle : RegularPoligon ;
 
         float (*Zoom)(float&);
-        printf("Scegli lo zoom:\n0. None\n1. Linear\n2.Armonic\n");
+        printf("Choose the way the figure changes size: \n0. None\n1. Linear\n2.Armonic\n");
         scanf("%d", &c);
         switch(c) {
             default:    Zoom = Null;                break;
@@ -53,7 +57,7 @@ int main() {
         }
 
         float (*Move)(float&);
-        printf("Scegli il movimento:\n0. None\n1. Armonic\n");
+        printf("Choose the way the figure moves: \n0. None\n1. Armonic\n");
         scanf("%d", &c);
         switch(c) {
             default:    Move = Null;                break;
@@ -61,7 +65,7 @@ int main() {
         }
 
         double (*Rotation)(double&);
-        printf("Scegli la rotazione:\n0. None\n1. Linear\n");
+        printf("Choose the way the figure rotates on his z axis: \n0. None\n1. Linear\n");
         scanf("%d", &c);
         switch(c) {
             default:    Rotation = Null;            break;
