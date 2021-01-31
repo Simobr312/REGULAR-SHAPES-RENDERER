@@ -15,29 +15,26 @@ void Clear(bool grid[dimX][dimY]);
 void Render(bool grid[dimX][dimY]);
 
 void Line(bool grid[dimX][dimY], float o, float x1, float y1, float x2, float y2 );
-void Circle(bool grid[dimX][dimY], float r, int vert, float (*Zoom)(float), float (*Move)(float), double (*Rotation)(double));
-void RegularPoligon(bool grid[dimX][dimY], float r, int vert, float (*Zoom)(float), float (*Move)(float), double (*Rotation)(double));
+void Circle(bool grid[dimX][dimY], int vert, float r, float pos, double alpha);
+void RegularPoligon(bool grid[dimX][dimY], int vert, float r, float pos, double alpha);
 
-float Null(float a)        { return a;                              }
-double Null(double a)      { return a;                              }
+float Null(float& a) {}
+double Null(double& a) {}   
 
-float ArmonicZoom(float r) { return r + cos(clock() * 0.002) * 5;   }
-float linear_move;
-float LinearZoom(float r)  { return r + (linear_move+=0.1); }
+float ArmonicZoom(float& r) { r += cos(clock() * 0.002);    }
+float LinearZoom(float& r)  {r += 1; }
 
-float ArmonicMove(float o) { return o + sin(clock() * 0.002) * 5;   }
+float ArmonicMove(float& pos) { pos += sin(clock() * 0.002);   }
 
-double linear_rotation; 
-double LinearRotation(double alpha) { return alpha + (linear_rotation+=0.1); }
+double LinearRotation(double& alpha) { alpha += 0.1; }
 
 int main() {
     while(true) {
         bool grid[dimX][dimY];
-        float r; int vert; int c; 
+        float r = 0; 
+        int c, vert; 
 
-        linear_move = (linear_rotation = 0);
-
-        void (*Shape)(bool grid[][dimY], float r, int vert, float (*Zoom)(float), float (*Move)(float), double (*Rotation)(double)  );
+        void (*Shape)(bool [][dimY], int, float, float, double);
 
         printf("Scegli il raggio: \n");
         scanf("%f", &r);
@@ -46,7 +43,7 @@ int main() {
         scanf("%d", &vert);
         Shape = ( vert< 2  || vert > 10) ? Circle : RegularPoligon ;
 
-        float (*Zoom)(float);
+        float (*Zoom)(float&);
         printf("Scegli lo zoom:\n0. None\n1. Linear\n2.Armonic\n");
         scanf("%d", &c);
         switch(c) {
@@ -55,7 +52,7 @@ int main() {
             case 2:     Zoom = ArmonicZoom;     break;
         }
 
-        float (*Move)(float);
+        float (*Move)(float&);
         printf("Scegli il movimento:\n0. None\n1. Armonic\n");
         scanf("%d", &c);
         switch(c) {
@@ -63,7 +60,7 @@ int main() {
             case 1:     Move = ArmonicMove;         break;
         }
 
-        double (*Rotation)(double);
+        double (*Rotation)(double&);
         printf("Scegli la rotazione:\n0. None\n1. Linear\n");
         scanf("%d", &c);
         switch(c) {
@@ -71,11 +68,18 @@ int main() {
             case 1:     Rotation = LinearRotation;  break;
         }
 
+        float pos = dimX/2;
+        double alpha = 0;    
+
         bool a = true;
         while(a) {
             Clear(grid);
             
-            Shape(grid, r, vert, Zoom, Move, Rotation);
+            Zoom(r) ;
+            Move(pos);
+            Rotation(alpha);
+
+            Shape(grid, vert, r, pos, alpha);
             system("cls");
             Render(grid);
 
@@ -102,15 +106,10 @@ void Render(bool output[dimX][dimY]) {
     }
 }
 
-void Circle(bool grid[dimX][dimY], float r0, int vert, float (*Zoom)(float), float (*Move)(float), double (*Rotation)(double)) {
-    float origin0 = dimX / 2;
-    printf("l");
-    float r = Zoom(r0) ;
-    float origin = Move(origin0);
-
+void Circle(bool grid[dimX][dimY], int vert, float r, float pos, double alpha ) {
     for(double alpha = 0 ; alpha <= (2 * pi) ; alpha += 0.01) {
-        int x = origin + r * cos(alpha);
-        int y = (origin + r * sin(alpha)) / 2;
+        int x = pos + r * cos(alpha);
+        int y = (pos + r * sin(alpha)) / 2;
 
         if(x >= 0 && x < dimX && y >= 0 && y < dimY)
             grid[x][y] = true;
@@ -134,18 +133,14 @@ void Line(bool grid[dimX][dimY], float o, float x1, float y1, float x2, float y2
     }
 }
 
-void RegularPoligon(bool grid[dimX][dimY], float r0, int vert, float (*Zoom)(float), float (*Move)(float), double (*Rotation)(double)) {
+void RegularPoligon(bool grid[dimX][dimY], int vert, float r, float pos, double alpha ) {
     float origin0 = dimX / 2;
-
-    float r = Zoom(r0) ;
-    float origin = Move(origin0);
-    double alpha = Rotation(alpha);
 
     for(int i = 0 ; i < vert ; ++i) {
         float x1 = r * cos(alpha), y1 = r * sin(alpha);
         alpha += (2. * pi / vert);
         float x2 = r * cos(alpha), y2 = r * sin(alpha);
         
-        Line(grid, origin, x1, y1, x2, y2);
+        Line(grid, pos, x1, y1, x2, y2);
     }
 } 
