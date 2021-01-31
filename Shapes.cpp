@@ -72,7 +72,7 @@ int main() {
         switch(c) {
             default:    Rotation = Null;            break;
             case 1:     Rotation = LinearRotation;  break;
-            case 2:     Rotation = ArmonicRotation;  break;
+            case 2:     Rotation = ArmonicRotation; break;
         }
 
         float pos = dimX/2;
@@ -141,8 +141,6 @@ void Line(bool grid[dimX][dimY], float o, float x1, float y1, float x2, float y2
 }
 
 void RegularPoligon(bool grid[dimX][dimY], int vert, float r, float pos, double alpha ) {
-    float origin0 = dimX / 2;
-
     for(int i = 0 ; i < vert ; ++i) {
         float x1 = r * cos(alpha), y1 = r * sin(alpha);
         alpha += (2. * pi / vert);
