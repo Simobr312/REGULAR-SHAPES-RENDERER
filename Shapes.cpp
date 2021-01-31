@@ -31,6 +31,7 @@ double LinearRotation(double& alpha) { alpha += 0.1; }
 int main() {
     printf("Deloped by Simone Riccio\n");
     printf("This little program will draw you in the console every regular poligon possible to that resolution\n");
+    printf("and you can also choose some effects to apply on that. \n");
     printf("The great thing is that everything you see is only made by printing letter.\n \n");
 
     while(true) {
