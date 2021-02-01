@@ -16,6 +16,8 @@ const int default_pos_y = dimY;
 
 const char* glyph = " *";
 
+float initial_radius;
+
 void Clear(bool grid[dimX][dimY]);
 void Render(bool grid[dimX][dimY]);
 
@@ -28,6 +30,7 @@ double Null(double& a) {}
 
 float ArmonicZoom(float& r) { r += cos(clock() * 0.002);    }
 float LinearZoom(float& r)  {r += 1; }
+float PopZoom(float& r) { r = r < (initial_radius + 15) ? r += r * 0.1 : initial_radius; }
 
 float ArmonicMove(float& pos) { pos += sin(clock() * 0.002);   }
 
@@ -41,26 +44,26 @@ int main() {
     printf("The great thing is that everything you see is only made by printing letter.\n \n");
 
     while(true) {
-        bool grid[dimX][dimY];
-        float r = 0; 
+        bool grid[dimX][dimY]; 
         int c, vert; 
 
         void (*Shape)(bool [][dimY], int, float, float, float, double);
 
         printf("Choose the radius: \n");
-        scanf("%f", &r);
+        scanf("%f", &initial_radius);
 
         printf("Choose the number of vertices of the poligon: ");
         scanf("%d", &vert);
         Shape = ( vert< 2  || vert > 10) ? Circle : RegularPoligon ;
 
         float (*Zoom)(float&);
-        printf("Choose the way the figure changes size: \n0. None\n1. Linear\n2.Armonic\n");
+        printf("Choose the way the figure changes size: \n0. None\n1. Linear\n2.Armonic\n3.Pop");
         scanf("%d", &c);
         switch(c) {
             default:    Zoom = Null;                break;
             case 1:     Zoom = LinearZoom;          break;
             case 2:     Zoom = ArmonicZoom;         break;
+            case 3:     Zoom = PopZoom;             break;
         }
 
         float (*MoveX)(float&);
@@ -88,6 +91,7 @@ int main() {
             case 2:     Rotation = ArmonicRotation; break;
         }
 
+        float r = initial_radius;
         float posX = default_pos_x, posY = default_pos_y;
         double alpha = 0;    
 
