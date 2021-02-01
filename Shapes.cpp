@@ -86,7 +86,7 @@ int main() {
         printf("Choose the way the figure rotates on his z axis: \n0. None\n1. Linear\n2.Armonic\n");
         scanf("%d", &c);
         switch(c) {
-            default:    Rotation = Null;         break;
+            default:    Rotation = Null;            break;
             case 1:     Rotation = LinearRotation;  break;
             case 2:     Rotation = ArmonicRotation; break;
         }
