@@ -25,9 +25,6 @@ void Line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x
 void Circle(bool grid[dimX][dimY], int vert, float r,  float posX, float posY, double alpha);
 void RegularPoligon(bool grid[dimX][dimY], int vert, float r,  float posX, float posY, double alpha);
 
-void Null(float& a) {}
-void Null(double& a) {}   
-
 void ArmonicZoom(float& r) { r += cos(clock() * 0.002);    }
 void LinearZoom(float& r)  {r += 1; }
 void PopZoom(float& r) { r = r < (initial_radius + 15) ? r += r * 0.1 : initial_radius; }
@@ -57,10 +54,10 @@ int main() {
         Shape = ( vert< 2  || vert > 10) ? Circle : RegularPoligon ;
 
         void (*Zoom)(float&);
-        printf("Choose the way the figure changes size: \n0. None\n1. Linear\n2.Armonic\n3.Pop");
+        printf("Choose the way the figure changes size: \n0. None\n1. Linear\n2.Armonic\n3.Pop\n");
         scanf("%d", &c);
         switch(c) {
-            default:    Zoom = Null;                break;
+            default:    Zoom = nullptr;             break;
             case 1:     Zoom = LinearZoom;          break;
             case 2:     Zoom = ArmonicZoom;         break;
             case 3:     Zoom = PopZoom;             break;
@@ -70,7 +67,7 @@ int main() {
         printf("Choose the way the figure moves on the X axis: \n0. None\n1. Armonic\n");
         scanf("%d", &c);
         switch(c) {
-            default:    MoveX = Null;               break;
+            default:    MoveX = nullptr;            break;
             case 1:     MoveX = ArmonicMove;        break;
         }
 
@@ -78,7 +75,7 @@ int main() {
         printf("Choose the way the figure moves on the Y axis: \n0. None\n1. Armonic\n");
         scanf("%d", &c);
         switch(c) {
-            default:    MoveY = Null;               break;
+            default:    MoveY = nullptr;            break;
             case 1:     MoveY = ArmonicMove;        break;
         }
 
@@ -86,7 +83,7 @@ int main() {
         printf("Choose the way the figure rotates on his z axis: \n0. None\n1. Linear\n2.Armonic\n");
         scanf("%d", &c);
         switch(c) {
-            default:    Rotation = Null;            break;
+            default:    Rotation = nullptr;         break;
             case 1:     Rotation = LinearRotation;  break;
             case 2:     Rotation = ArmonicRotation; break;
         }
@@ -99,10 +96,10 @@ int main() {
         while(a) {
             Clear(grid);
             
-            Zoom(r) ;
-            MoveX(posX);
-            MoveY(posY);
-            Rotation(alpha);
+            if(Zoom)        Zoom(r) ;
+            if(MoveX)       MoveX(posX);
+            if(MoveY)       MoveY(posY);
+            if(Rotation)    Rotation(alpha);
 
             Shape(grid, vert, r, posX, posY, alpha);
             system("cls");
@@ -175,7 +172,6 @@ void Line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x
 
             if(isInRange(xp, yp))
                 grid[xp][yp] = true;
-             
         }
     }
 }
