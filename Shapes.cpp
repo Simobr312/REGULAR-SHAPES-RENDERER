@@ -60,7 +60,7 @@ int main() {
         printf("Choose the way the figure changes size: \n0. None\n1. Linear\n2.Armonic\n3.Pop");
         scanf("%d", &c);
         switch(c) {
-            default:    Zoom = Null;             break;
+            default:    Zoom = Null;                break;
             case 1:     Zoom = LinearZoom;          break;
             case 2:     Zoom = ArmonicZoom;         break;
             case 3:     Zoom = PopZoom;             break;
@@ -70,16 +70,16 @@ int main() {
         printf("Choose the way the figure moves on the X axis: \n0. None\n1. Armonic\n");
         scanf("%d", &c);
         switch(c) {
-            default:    MoveX = Null;             break;
-            case 1:     MoveX = ArmonicMove;         break;
+            default:    MoveX = Null;               break;
+            case 1:     MoveX = ArmonicMove;        break;
         }
 
         void (*MoveY)(float&);
         printf("Choose the way the figure moves on the Y axis: \n0. None\n1. Armonic\n");
         scanf("%d", &c);
         switch(c) {
-            default:    MoveY = Null;             break;
-            case 1:     MoveY = ArmonicMove;         break;
+            default:    MoveY = Null;               break;
+            case 1:     MoveY = ArmonicMove;        break;
         }
 
         void (*Rotation)(double&);
