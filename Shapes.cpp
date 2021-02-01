@@ -11,14 +11,17 @@ const double pi = 355./113.;
 const int dimX = 50;
 const int dimY = dimX / 2;
 
+const int default_pos_x = dimX / 2;
+const int default_pos_y = dimY;
+
 const char* glyph = " *";
 
 void Clear(bool grid[dimX][dimY]);
 void Render(bool grid[dimX][dimY]);
 
-void Line(bool grid[dimX][dimY], float o, float x1, float y1, float x2, float y2 );
-void Circle(bool grid[dimX][dimY], int vert, float r, float pos, double alpha);
-void RegularPoligon(bool grid[dimX][dimY], int vert, float r, float pos, double alpha);
+void Line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x2, float y2 );
+void Circle(bool grid[dimX][dimY], int vert, float r,  float posX, float posY, double alpha);
+void RegularPoligon(bool grid[dimX][dimY], int vert, float r,  float posX, float posY, double alpha);
 
 float Null(float& a) {}
 double Null(double& a) {}   
@@ -42,7 +45,7 @@ int main() {
         float r = 0; 
         int c, vert; 
 
-        void (*Shape)(bool [][dimY], int, float, float, double);
+        void (*Shape)(bool [][dimY], int, float, float, float, double);
 
         printf("Choose the radius: \n");
         scanf("%f", &r);
@@ -60,12 +63,20 @@ int main() {
             case 2:     Zoom = ArmonicZoom;         break;
         }
 
-        float (*Move)(float&);
-        printf("Choose the way the figure moves: \n0. None\n1. Armonic\n");
+        float (*MoveX)(float&);
+        printf("Choose the way the figure moves on the X axis: \n0. None\n1. Armonic\n");
         scanf("%d", &c);
         switch(c) {
-            default:    Move = Null;                break;
-            case 1:     Move = ArmonicMove;         break;
+            default:    MoveX = Null;                break;
+            case 1:     MoveX = ArmonicMove;         break;
+        }
+
+        float (*MoveY)(float&);
+        printf("Choose the way the figure moves on the Y axis: \n0. None\n1. Armonic\n");
+        scanf("%d", &c);
+        switch(c) {
+            default:    MoveY = Null;                break;
+            case 1:     MoveY = ArmonicMove;         break;
         }
 
         double (*Rotation)(double&);
@@ -77,7 +88,7 @@ int main() {
             case 2:     Rotation = ArmonicRotation; break;
         }
 
-        float pos = dimX/2;
+        float posX = default_pos_x, posY = default_pos_y;
         double alpha = 0;    
 
         bool a = true;
@@ -85,10 +96,11 @@ int main() {
             Clear(grid);
             
             Zoom(r) ;
-            Move(pos);
+            MoveX(posX);
+            MoveY(posY);
             Rotation(alpha);
 
-            Shape(grid, vert, r, pos, alpha);
+            Shape(grid, vert, r, posX, posY, alpha);
             system("cls");
             Render(grid);
 
@@ -117,10 +129,10 @@ void Render(bool output[dimX][dimY]) {
     }
 }
 
-void Circle(bool grid[dimX][dimY], int vert, float r, float pos, double alpha ) {
+void Circle(bool grid[dimX][dimY], int vert, float r, float posX, float posY, double alpha ) {
     for(double alpha = 0 ; alpha <= (2 * pi) ; alpha += 0.01) {
-        int x = pos + r * cos(alpha);
-        int y = (pos + r * sin(alpha)) / 2;
+        int x = posX + r * cos(alpha);
+        int y = (posY + r * sin(alpha)) / 2;
 
         if(x >= 0 && x < dimX && y >= 0 && y < dimY)
             grid[x][y] = true;
@@ -130,26 +142,26 @@ void Circle(bool grid[dimX][dimY], int vert, float r, float pos, double alpha ) 
 float Max(float a, float b) { return a > b ? a : b; }
 float Min(float a, float b) { return a < b ? a : b; }
 
-void Line(bool grid[dimX][dimY], float o, float x1, float y1, float x2, float y2 ) {
+void Line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x2, float y2 ) {
     if(round(x1) != round(x2) ) {
         float m = (y2 - y1) / (x2 - x1);
         for(float x = Min(x1, x2) ; x <= Max(x1, x2) ; x += 0.1 ) {
             float y = (m * (x - x1)) + y1; 
-            grid[(int)(x + o)][(int)(y + o) / 2] = true;
+            grid[(int)(x + ox)][(int)(y + oy) / 2] = true;
         }
     } else {
         for(float y = Min(y1, y2) ; y <= Max(y1, y2) ; y += 0.1) {
-            grid[(int)(x1 + o)][(int)(y + o) / 2] = true;
+            grid[(int)(x1 + ox)][(int)(y + oy) / 2] = true;
         }
     }
 }
 
-void RegularPoligon(bool grid[dimX][dimY], int vert, float r, float pos, double alpha ) {
+void RegularPoligon(bool grid[dimX][dimY], int vert, float r, float posX, float posY, double alpha ) {
     for(int i = 0 ; i < vert ; ++i) {
         float x1 = r * cos(alpha), y1 = r * sin(alpha);
         alpha += (2. * pi / vert);
         float x2 = r * cos(alpha), y2 = r * sin(alpha);
         
-        Line(grid, pos, x1, y1, x2, y2);
+        Line(grid, posX, posY, x1, y1, x2, y2);
     }
 } 
