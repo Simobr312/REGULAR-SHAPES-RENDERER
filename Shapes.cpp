@@ -25,25 +25,25 @@ void Line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x
 void Circle(bool grid[dimX][dimY], int vert, float r,  float posX, float posY, double alpha);
 void RegularPoligon(bool grid[dimX][dimY], int vert, float r,  float posX, float posY, double alpha);
 
-float Null(float& a) {}
-double Null(double& a) {}   
+void Null(float& a) {}
+void Null(double& a) {}   
 
-float ArmonicZoom(float& r) { r += cos(clock() * 0.002);    }
-float LinearZoom(float& r)  {r += 1; }
-float PopZoom(float& r) { r = r < (initial_radius + 15) ? r += r * 0.1 : initial_radius; }
+void ArmonicZoom(float& r) { r += cos(clock() * 0.002);    }
+void LinearZoom(float& r)  {r += 1; }
+void PopZoom(float& r) { r = r < (initial_radius + 15) ? r += r * 0.1 : initial_radius; }
 
-float ArmonicMove(float& pos) { pos += sin(clock() * 0.002);   }
+void ArmonicMove(float& pos) { pos += sin(clock() * 0.002);   }
 
-double LinearRotation(double& alpha) { alpha += 0.1; }
-double ArmonicRotation(double& alpha) { alpha += cos(clock() * 0.002) * 0.3; }
+void LinearRotation(double& alpha) { alpha += 0.1; }
+void ArmonicRotation(double& alpha) { alpha += cos(clock() * 0.002) * 0.3; }
 
 int main() {
     printf("Deloped by Simone Riccio\n");
     printf("This little program will draw you in the console every regular poligon possible to that resolution\n");
     printf("and you can also choose some effects to apply on that. \n");
     printf("The great thing is that everything you see is only made by printing letter.\n \n");
-
-    while(true) {
+    bool isRunning = true;
+    do {
         bool grid[dimX][dimY]; 
         int c, vert; 
 
@@ -56,37 +56,37 @@ int main() {
         scanf("%d", &vert);
         Shape = ( vert< 2  || vert > 10) ? Circle : RegularPoligon ;
 
-        float (*Zoom)(float&);
+        void (*Zoom)(float&);
         printf("Choose the way the figure changes size: \n0. None\n1. Linear\n2.Armonic\n3.Pop");
         scanf("%d", &c);
         switch(c) {
-            default:    Zoom = Null;                break;
+            default:    Zoom = Null;             break;
             case 1:     Zoom = LinearZoom;          break;
             case 2:     Zoom = ArmonicZoom;         break;
             case 3:     Zoom = PopZoom;             break;
         }
 
-        float (*MoveX)(float&);
+        void (*MoveX)(float&);
         printf("Choose the way the figure moves on the X axis: \n0. None\n1. Armonic\n");
         scanf("%d", &c);
         switch(c) {
-            default:    MoveX = Null;                break;
+            default:    MoveX = Null;             break;
             case 1:     MoveX = ArmonicMove;         break;
         }
 
-        float (*MoveY)(float&);
+        void (*MoveY)(float&);
         printf("Choose the way the figure moves on the Y axis: \n0. None\n1. Armonic\n");
         scanf("%d", &c);
         switch(c) {
-            default:    MoveY = Null;                break;
+            default:    MoveY = Null;             break;
             case 1:     MoveY = ArmonicMove;         break;
         }
 
-        double (*Rotation)(double&);
+        void (*Rotation)(double&);
         printf("Choose the way the figure rotates on his z axis: \n0. None\n1. Linear\n2.Armonic\n");
         scanf("%d", &c);
         switch(c) {
-            default:    Rotation = Null;            break;
+            default:    Rotation = Null;         break;
             case 1:     Rotation = LinearRotation;  break;
             case 2:     Rotation = ArmonicRotation; break;
         }
@@ -112,7 +112,8 @@ int main() {
             if (GetKeyState(VK_ESCAPE) & 0x8000) a = false; 
             #endif
         }
-    }
+    } while(isRunning);
+
     return 0;
 }
 
@@ -133,13 +134,14 @@ void Render(bool output[dimX][dimY]) {
     }
 }
 
+bool isInRange(int x, int y) { return x >= 0 && x < dimX && y >= 0 && y < dimY;}
+
 void Circle(bool grid[dimX][dimY], int vert, float r, float posX, float posY, double alpha ) {
-    for(double alpha = 0 ; alpha <= (2 * pi) ; alpha += 0.01) {
+    for(alpha = 0 ; alpha <= (2 * pi) ; alpha += 0.01) {
         int x = posX + r * cos(alpha);
         int y = (posY + r * sin(alpha)) / 2;
 
-        if(x >= 0 && x < dimX && y >= 0 && y < dimY)
-            grid[x][y] = true;
+        if(isInRange(x, y)) grid[x][y] = true;
     }
 }
 
@@ -147,15 +149,33 @@ float Max(float a, float b) { return a > b ? a : b; }
 float Min(float a, float b) { return a < b ? a : b; }
 
 void Line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x2, float y2 ) {
-    if(round(x1) != round(x2) ) {
-        float m = (y2 - y1) / (x2 - x1);
-        for(float x = Min(x1, x2) ; x <= Max(x1, x2) ; x += 0.1 ) {
-            float y = (m * (x - x1)) + y1; 
-            grid[(int)(x + ox)][(int)(y + oy) / 2] = true;
+
+    float dX = x2 - x1;
+    float dY = y2 - y1;
+    
+    if(abs(dX) > abs(dY)) {
+        float m = dY / dX;
+        float xi = Min(x1, x2); float xf = Max(x1, x2);
+
+        for(float x = xi ; x <= xf ; x += 0.1f) {
+            float y = m * (x - x1) + y1;
+
+            int xp = ox + round(x), yp = (oy + round(y)) / 2;
+            
+            if(isInRange(xp, yp)) grid[xp][yp] = true;
         }
-    } else {
-        for(float y = Min(y1, y2) ; y <= Max(y1, y2) ; y += 0.1) {
-            grid[(int)(x1 + ox)][(int)(y + oy) / 2] = true;
+    } else {      
+        float m = dX / dY;
+        float yi = Min(y1, y2); float yf = Max(y1, y2);
+        
+        for(float y = yi; y <= yf ; y += 0.1) {
+            float x = m * (y - y1) + x1;
+
+            int xp = ox + round(x), yp = (oy + round(y)) / 2;
+
+            if(xp >= 0 && xp < dimX && yp >= 0 && yp < dimY)
+                grid[xp][yp] = true;
+             
         }
     }
 }
