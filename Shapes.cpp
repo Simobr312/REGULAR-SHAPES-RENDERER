@@ -2,7 +2,9 @@
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 const double pi = 355./113.;
 
@@ -90,7 +92,9 @@ int main() {
             system("cls");
             Render(grid);
 
+            #ifdef _WIN32
             if (GetKeyState(VK_ESCAPE) & 0x8000) a = false; 
+            #endif
         }
     }
     return 0;
