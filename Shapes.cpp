@@ -173,7 +173,7 @@ void Line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x
 
             int xp = ox + round(x), yp = (oy + round(y)) / 2;
 
-            if(xp >= 0 && xp < dimX && yp >= 0 && yp < dimY)
+            if(isInRange(xp, yp))
                 grid[xp][yp] = true;
              
         }
