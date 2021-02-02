@@ -11,6 +11,9 @@ const double pi = 355./113.;
 const int dimX = 50;
 const int dimY = dimX / 2;
 
+clock_t initTime, oldTime;
+double dt, elapsedTime;
+
 const int default_pos_x = dimX / 2;
 const int default_pos_y = dimY;
 
@@ -25,21 +28,26 @@ void Line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x
 void Circle(bool grid[dimX][dimY], int vert, float r,  float posX, float posY, double alpha);
 void RegularPoligon(bool grid[dimX][dimY], int vert, float r,  float posX, float posY, double alpha);
 
-void ArmonicZoom(float& r) { r += cos(clock() * 0.002);    }
-void LinearZoom(float& r)  {r += 1; }
-void PopZoom(float& r) { r = r < (initial_radius + 15) ? r += r * 0.1 : initial_radius; }
+void ArmonicZoom(float& r)  { r += (cos(elapsedTime) * 10.)/initial_radius;  }
+void LinearZoom(float& r)   { r += (2 * dt); }
+void PopZoom(float& r)      { r = r < (initial_radius + 15) ? r += r * 0.1 : initial_radius; }
 
-void ArmonicMove(float& pos) { pos += sin(clock() * 0.002);   }
+void ArmonicMove(float& pos){ pos += cos(elapsedTime);   }
 
-void LinearRotation(double& alpha) { alpha += 0.1; }
-void ArmonicRotation(double& alpha) { alpha += cos(clock() * 0.002) * 0.3; }
+void LinearRotation(double& alpha)  { alpha += (2 * dt); }
+void ArmonicRotation(double& alpha) { alpha += cos(elapsedTime) * 0.3; }
+
+void CalculateTime();
 
 int main() {
     printf("Deloped by Simone Riccio\n");
     printf("This little program will draw you in the console every regular poligon possible to that resolution\n");
     printf("and you can also choose some effects to apply on that. \n");
     printf("The great thing is that everything you see is only made by printing letter.\n \n");
+
     bool isRunning = true;
+    oldTime = clock();
+    
     do {
         bool grid[dimX][dimY]; 
         int c, vert; 
@@ -91,9 +99,10 @@ int main() {
         float r = initial_radius;
         float posX = default_pos_x, posY = default_pos_y;
         double alpha = 0;    
-
         bool a = true;
+        initTime = clock();
         while(a) {
+            CalculateTime();
             Clear(grid);
             
             if(Zoom)        Zoom(r) ;
@@ -129,6 +138,7 @@ void Render(bool output[dimX][dimY]) {
         }
         putchar('\n');
     }
+    printf("%f   %f \n",dt, elapsedTime);
 }
 
 bool isInRange(int x, int y) { return x >= 0 && x < dimX && y >= 0 && y < dimY;}
@@ -185,3 +195,9 @@ void RegularPoligon(bool grid[dimX][dimY], int vert, float r, float posX, float 
         Line(grid, posX, posY, x1, y1, x2, y2);
     }
 } 
+
+void CalculateTime() {
+    elapsedTime = (clock() - initTime) / (double)CLOCKS_PER_SEC;
+    dt = (clock() - oldTime) / (double)CLOCKS_PER_SEC;
+    oldTime = clock();
+}
