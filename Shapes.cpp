@@ -4,6 +4,7 @@
 #include <ctime>
 #ifdef _WIN32
 #include <windows.h>
+#define  CLEAR "cls"
 #endif
 
 const double pi = 355./113.;
@@ -30,7 +31,7 @@ void RegularPoligon(bool grid[dimX][dimY], int vert, float r,  float posX, float
 
 void ArmonicZoom(float& r)  { r += (cos(elapsedTime) * 10.)/initial_radius;  }
 void LinearZoom(float& r)   { r += (2 * dt); }
-void PopZoom(float& r)      { r = r < (initial_radius + 15) ? r += r * 0.1 : initial_radius; }
+void PopZoom(float& r)      { r = r < (initial_radius + 15) ? r += dt * (r * r / 100.) : initial_radius; }
 
 void ArmonicMove(float& pos){ pos += cos(elapsedTime);   }
 
@@ -111,7 +112,7 @@ int main() {
             if(Rotation)    Rotation(alpha);
 
             Shape(grid, vert, r, posX, posY, alpha);
-            system("cls");
+            system(CLEAR);
             Render(grid);
 
             #ifdef _WIN32
@@ -138,7 +139,6 @@ void Render(bool output[dimX][dimY]) {
         }
         putchar('\n');
     }
-    printf("%f   %f \n",dt, elapsedTime);
 }
 
 bool isInRange(int x, int y) { return x >= 0 && x < dimX && y >= 0 && y < dimY;}
