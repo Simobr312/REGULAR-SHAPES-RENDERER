@@ -11,15 +11,12 @@ const double pi = 355./113.;
 
 const int dimX = 50;
 const int dimY = dimX / 2;
+const char* glyph = " *";
 
 clock_t initTime, oldTime;
 double dt, elapsedTime;
 
-const int default_pos_x = dimX / 2;
-const int default_pos_y = dimY;
-
-const char* glyph = " *";
-
+const int default_pos_x = dimX / 2, default_pos_y = dimY;
 float initial_radius;
 
 void Clear(bool grid[dimX][dimY]);
