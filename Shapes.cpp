@@ -60,7 +60,7 @@ int main() {
         Shape = ( vert< 2  || vert > 10) ? Circle : RegularPoligon ;
 
         void (*Zoom)(float&);
-        printf("Choose the way the figure changes size: \n0. None\n1. Linear\n2.Armonic\n3.Pop\n");
+        printf("Choose the way the figure changes size: \n0. None\n1. Linear\n2. Armonic\n3. Pop\n");
         scanf("%d", &c);
         switch(c) {
             default:    Zoom = nullptr;             break;
@@ -86,7 +86,7 @@ int main() {
         }
 
         void (*Rotation)(double&);
-        printf("Choose the way the figure rotates on his z axis: \n0. None\n1. Linear\n2.Armonic\n");
+        printf("Choose the way the figure rotates on his z axis: \n0. None\n1. Linear\n2. Armonic\n");
         scanf("%d", &c);
         switch(c) {
             default:    Rotation = nullptr;         break;
