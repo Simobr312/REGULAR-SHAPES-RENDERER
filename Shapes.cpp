@@ -9,7 +9,7 @@
 
 const double pi = 355./113.;
 
-const int dimX = 50;
+const int dimX = 100;
 const int dimY = dimX / 2;
 const char* glyph = " *";
 
@@ -45,6 +45,8 @@ int main() {
 
     bool isRunning = true;
     oldTime = clock();
+    char buffer[dimX * dimY + 10];
+    setbuf(stdout, buffer);
     
     do {
         bool grid[dimX][dimY]; 
@@ -53,14 +55,17 @@ int main() {
         void (*Shape)(bool [][dimY], int, float, float, float, double);
 
         printf("Choose the radius: \n");
+        fflush(stdout);
         scanf("%f", &initial_radius);
 
         printf("Choose the number of vertices of the poligon: ");
+        fflush(stdout);
         scanf("%d", &vert);
         Shape = ( vert< 2  || vert > 10) ? Circle : RegularPoligon ;
 
         void (*Zoom)(float&);
         printf("Choose the way the figure changes size: \n0. None\n1. Linear\n2. Armonic\n3. Pop\n");
+        fflush(stdout);
         scanf("%d", &c);
         switch(c) {
             default:    Zoom = nullptr;             break;
@@ -71,6 +76,7 @@ int main() {
 
         void (*MoveX)(float&);
         printf("Choose the way the figure moves on the X axis: \n0. None\n1. Armonic\n");
+        fflush(stdout);
         scanf("%d", &c);
         switch(c) {
             default:    MoveX = nullptr;            break;
@@ -79,6 +85,7 @@ int main() {
 
         void (*MoveY)(float&);
         printf("Choose the way the figure moves on the Y axis: \n0. None\n1. Armonic\n");
+        fflush(stdout);
         scanf("%d", &c);
         switch(c) {
             default:    MoveY = nullptr;            break;
@@ -87,6 +94,7 @@ int main() {
 
         void (*Rotation)(double&);
         printf("Choose the way the figure rotates on his z axis: \n0. None\n1. Linear\n2. Armonic\n");
+        fflush(stdout);
         scanf("%d", &c);
         switch(c) {
             default:    Rotation = nullptr;         break;
@@ -109,7 +117,7 @@ int main() {
             if(Rotation)    Rotation(alpha);
 
             Shape(grid, vert, r, posX, posY, alpha);
-            system(CLEAR);
+            
             Render(grid);
 
             #ifdef _WIN32
@@ -130,12 +138,14 @@ void Clear(bool grid[dimX][dimY]) {
 }
 
 void Render(bool output[dimX][dimY]) {
+    system(CLEAR);
     for(int y = 0 ; y < dimY ; ++y) {
         for(int x = 0 ; x < dimX ; ++x) {
             putchar(glyph[output[x][y]]);
         }
         putchar('\n');
     }
+    fflush(stdout);
 }
 
 bool isInRange(int x, int y) { return x >= 0 && x < dimX && y >= 0 && y < dimY;}
