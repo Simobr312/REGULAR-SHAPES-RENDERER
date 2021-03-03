@@ -19,23 +19,23 @@ double dt, elapsedTime;
 const int default_pos_x = dimX / 2, default_pos_y = dimY;
 float initial_radius;
 
-void Clear(bool grid[dimX][dimY]);
-void Render(bool grid[dimX][dimY]);
+void clear(bool grid[dimX][dimY]);
+void render(bool grid[dimX][dimY]);
 
-void Line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x2, float y2 );
-void Circle(bool grid[dimX][dimY], int vert, float r,  float posX, float posY, double alpha);
-void RegularPoligon(bool grid[dimX][dimY], int vert, float r,  float posX, float posY, double alpha);
+void line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x2, float y2 );
+void circle(bool grid[dimX][dimY], int vert, float r,  float posX, float posY, double alpha);
+void regularPoligon(bool grid[dimX][dimY], int vert, float r,  float posX, float posY, double alpha);
 
-void ArmonicZoom(float& r)  { r += (cos(elapsedTime) * 10.)/initial_radius;  }
-void LinearZoom(float& r)   { r += (2 * dt); }
-void PopZoom(float& r)      { r = r < (initial_radius + 15) ? r += dt * (r * r / 100.) : initial_radius; }
+void armonicZoom(float& r)  { r += (cos(elapsedTime) * 10.)/initial_radius;  }
+void linearZoom(float& r)   { r += (2 * dt); }
+void popZoom(float& r)      { r = r < (initial_radius + 15) ? r += dt * (r * r / 100.) : initial_radius; }
 
-void ArmonicMove(float& pos){ pos += cos(elapsedTime);   }
+void armonicMove(float& pos){ pos += cos(elapsedTime);   }
 
-void LinearRotation(double& alpha)  { alpha += (2 * dt); }
-void ArmonicRotation(double& alpha) { alpha += cos(elapsedTime) * 0.3; }
+void linearRotation(double& alpha)  { alpha += (2 * dt); }
+void armonicRotation(double& alpha) { alpha += cos(elapsedTime) * 0.3; }
 
-void CalculateTime();
+void calculateTime();
 
 int main() {
     printf("Deloped by Simone Riccio\n");
@@ -52,7 +52,7 @@ int main() {
         bool grid[dimX][dimY]; 
         int c, vert; 
 
-        void (*Shape)(bool [][dimY], int, float, float, float, double);
+        void (*shape)(bool [][dimY], int, float, float, float, double);
 
         printf("Choose the radius: \n");
         fflush(stdout);
@@ -61,45 +61,45 @@ int main() {
         printf("Choose the number of vertices of the poligon: ");
         fflush(stdout);
         scanf("%d", &vert);
-        Shape = ( vert< 2  || vert > 10) ? Circle : RegularPoligon ;
+        shape = ( vert< 2  || vert > 10) ? circle : regularPoligon ;
 
-        void (*Zoom)(float&);
+        void (*zoom)(float&);
         printf("Choose the way the figure changes size: \n0. None\n1. Linear\n2. Armonic\n3. Pop\n");
         fflush(stdout);
         scanf("%d", &c);
         switch(c) {
-            default:    Zoom = nullptr;             break;
-            case 1:     Zoom = LinearZoom;          break;
-            case 2:     Zoom = ArmonicZoom;         break;
-            case 3:     Zoom = PopZoom;             break;
+            default:    zoom = nullptr;             break;
+            case 1:     zoom = linearZoom;          break;
+            case 2:     zoom = armonicZoom;         break;
+            case 3:     zoom = popZoom;             break;
         }
 
-        void (*MoveX)(float&);
+        void (*moveX)(float&);
         printf("Choose the way the figure moves on the X axis: \n0. None\n1. Armonic\n");
         fflush(stdout);
         scanf("%d", &c);
         switch(c) {
-            default:    MoveX = nullptr;            break;
-            case 1:     MoveX = ArmonicMove;        break;
+            default:    moveX = nullptr;            break;
+            case 1:     moveX = armonicMove;        break;
         }
 
-        void (*MoveY)(float&);
+        void (*moveY)(float&);
         printf("Choose the way the figure moves on the Y axis: \n0. None\n1. Armonic\n");
         fflush(stdout);
         scanf("%d", &c);
         switch(c) {
-            default:    MoveY = nullptr;            break;
-            case 1:     MoveY = ArmonicMove;        break;
+            default:    moveY = nullptr;            break;
+            case 1:     moveY = armonicMove;        break;
         }
 
-        void (*Rotation)(double&);
+        void (*rotation)(double&);
         printf("Choose the way the figure rotates on his z axis: \n0. None\n1. Linear\n2. Armonic\n");
         fflush(stdout);
         scanf("%d", &c);
         switch(c) {
-            default:    Rotation = nullptr;         break;
-            case 1:     Rotation = LinearRotation;  break;
-            case 2:     Rotation = ArmonicRotation; break;
+            default:    rotation = nullptr;         break;
+            case 1:     rotation = linearRotation;  break;
+            case 2:     rotation = armonicRotation; break;
         }
 
         float r = initial_radius;
@@ -108,17 +108,17 @@ int main() {
         bool a = true;
         initTime = clock();
         while(a) {
-            CalculateTime();
-            Clear(grid);
+            calculateTime();
+            clear(grid);
             
-            if(Zoom)        Zoom(r) ;
-            if(MoveX)       MoveX(posX);
-            if(MoveY)       MoveY(posY);
-            if(Rotation)    Rotation(alpha);
+            if(zoom)        zoom(r) ;
+            if(moveX)       moveX(posX);
+            if(moveY)       moveY(posY);
+            if(rotation)    rotation(alpha);
 
-            Shape(grid, vert, r, posX, posY, alpha);
+            shape(grid, vert, r, posX, posY, alpha);
             
-            Render(grid);
+            render(grid);
 
             #ifdef _WIN32
             if (GetKeyState(VK_ESCAPE) & 0x8000) a = false; 
@@ -129,7 +129,7 @@ int main() {
     return 0;
 }
 
-void Clear(bool grid[dimX][dimY]) {
+void clear(bool grid[dimX][dimY]) {
     for(int y = 0 ; y < dimY ; ++y) {
             for(int x = 0 ; x < dimX ; ++x) {
                 grid[x][y] = false;
@@ -137,7 +137,7 @@ void Clear(bool grid[dimX][dimY]) {
     }   
 }
 
-void Render(bool output[dimX][dimY]) {
+void render(bool output[dimX][dimY]) {
     system(CLEAR);
     for(int y = 0 ; y < dimY ; ++y) {
         for(int x = 0 ; x < dimX ; ++x) {
@@ -150,7 +150,7 @@ void Render(bool output[dimX][dimY]) {
 
 bool isInRange(int x, int y) { return x >= 0 && x < dimX && y >= 0 && y < dimY;}
 
-void Circle(bool grid[dimX][dimY], int vert, float r, float posX, float posY, double alpha ) {
+void circle(bool grid[dimX][dimY], int vert, float r, float posX, float posY, double alpha ) {
     for(alpha = 0 ; alpha <= (2 * pi) ; alpha += 0.01) {
         int x = posX + r * cos(alpha);
         int y = (posY + r * sin(alpha)) / 2;
@@ -159,17 +159,17 @@ void Circle(bool grid[dimX][dimY], int vert, float r, float posX, float posY, do
     }
 }
 
-float Max(float a, float b) { return a > b ? a : b; }
-float Min(float a, float b) { return a < b ? a : b; }
+float max(float a, float b) { return a > b ? a : b; }
+float min(float a, float b) { return a < b ? a : b; }
 
-void Line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x2, float y2 ) {
+void line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x2, float y2 ) {
 
     float dX = x2 - x1;
     float dY = y2 - y1;
     
     if(abs(dX) > abs(dY)) {
         float m = dY / dX;
-        float xi = Min(x1, x2); float xf = Max(x1, x2);
+        float xi = min(x1, x2); float xf = max(x1, x2);
 
         for(float x = xi ; x <= xf ; x += 0.1f) {
             float y = m * (x - x1) + y1;
@@ -180,7 +180,7 @@ void Line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x
         }
     } else {      
         float m = dX / dY;
-        float yi = Min(y1, y2); float yf = Max(y1, y2);
+        float yi = min(y1, y2); float yf = max(y1, y2);
         
         for(float y = yi; y <= yf ; y += 0.1) {
             float x = m * (y - y1) + x1;
@@ -193,17 +193,17 @@ void Line(bool grid[dimX][dimY], float ox, float oy, float x1, float y1, float x
     }
 }
 
-void RegularPoligon(bool grid[dimX][dimY], int vert, float r, float posX, float posY, double alpha ) {
+void regularPoligon(bool grid[dimX][dimY], int vert, float r, float posX, float posY, double alpha ) {
     for(int i = 0 ; i < vert ; ++i) {
         float x1 = r * cos(alpha), y1 = r * sin(alpha);
         alpha += (2. * pi / vert);
         float x2 = r * cos(alpha), y2 = r * sin(alpha);
         
-        Line(grid, posX, posY, x1, y1, x2, y2);
+        line(grid, posX, posY, x1, y1, x2, y2);
     }
 } 
 
-void CalculateTime() {
+void calculateTime() {
     elapsedTime = (clock() - initTime) / (double)CLOCKS_PER_SEC;
     dt = (clock() - oldTime) / (double)CLOCKS_PER_SEC;
     oldTime = clock();
